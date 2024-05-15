@@ -17,10 +17,11 @@ type App struct {
 
 func New(
 	log *slog.Logger,
+	authService authgrpc.Auth,
 	port int,
 ) *App {
 	gRPCServer := grpc.NewServer()
-	authgrpc.Register(gRPCServer)
+	authgrpc.Register(gRPCServer, authService)
 
 	return &App{
 		log:        log,
@@ -64,7 +65,7 @@ func (a *App) Stop() {
 	const op = "grcpapp.Stop"
 
 	a.log.With(slog.String("op", op)).
-		Info("Stopping gRPC server")
+		Info("stopping gRPC server")
 
 	a.gRPCServer.GracefulStop()
 }
